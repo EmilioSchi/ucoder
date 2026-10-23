@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ucoder</title>
+<meta name="description" content="AI coding assistant with a command tool and file editing by line id. One Python file, standalone binaries for macOS, Linux and Windows.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -1 12 12'%3E%3Cpath fill='%234f84c2' fill-rule='evenodd' d='M2 0h10v6H2zM4 2h1v2H4zM10 2h1v2h-1zM3 6h8v2H3zM1 8h1v2H1zM3 8h1v2H3zM5 8h1v2H5zM9 8h1v2H9zM11 8h1v2h-1z'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #ffffff;
+  --fg: #1c1e22;
+  --muted: #747a84;
+  --rule: #e6e8ec;
+  --hover: #f2f5f9;
+  --mascot: #4f84c2;
+  --code-bg: #f8f9fb;
+  --gutter: #b4b9c1;
+  --keyword: #2f5fb3;
+  --string: #ad5a12;
+  --number: #a33ea1;
+  --builtin: #6b46c1;
+  --name: #111317;
+  --self: #8a8f98;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317;
+    --fg: #e4e6ea;
+    --muted: #8c919a;
+    --rule: #24272d;
+    --hover: #1a1d23;
+    --code-bg: #0c0e11;
+    --gutter: #474c55;
+    --keyword: #7ca8f4;
+    --string: #e3a066;
+    --number: #d78ad7;
+    --builtin: #b499f2;
+    --name: #ffffff;
+    --self: #8c919a;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+main { display: grid; grid-template: minmax(0, 1fr) / minmax(360px, 2fr) 3fr; height: 100vh; }
+
+.intro { display: flex; flex-direction: column; overflow-y: auto; padding: 48px clamp(24px, 5vw, 80px); border-right: 1px solid var(--rule); }
+.intro > div { margin: auto 0; max-width: 460px; }
+.mascot { display: block; width: 120px; overflow: visible; margin-bottom: 32px; animation: float 3.2s ease-in-out infinite; }
+.mascot .body, .mascot .legs { fill: var(--mascot); }
+.mascot .eye { fill: var(--bg); transform-box: fill-box; transform-origin: center; animation: blink 4.4s steps(1, end) infinite; }
+.mascot .eyes { animation: glance 7s steps(1, end) infinite; }
+.mascot .legs { animation: wiggle .9s steps(1, end) infinite; }
+.mascot .legs + .legs { animation-delay: -.45s; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+@keyframes wiggle { 50% { transform: translateY(-1px); } }
+@keyframes blink { 96% { transform: scaleY(0); } }
+@keyframes glance { 0%, 76% { transform: none; } 58% { transform: translateX(-1px); } }
+@media (prefers-reduced-motion: reduce) { .mascot, .mascot * { animation: none !important; } }
+h1 { font: 700 56px/1 var(--mono); letter-spacing: -0.03em; }
+h1 span { color: var(--mascot); }
+.tagline { margin-top: 14px; color: var(--muted); font-size: 16px; }
+
+.downloads { margin-top: 44px; }
+.downloads header { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.downloads h2 { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.downloads header a { font-size: 13px; color: var(--muted); }
+.downloads header a:hover, .links a:hover { color: var(--mascot); }
+.platform { padding: 14px 0 6px; }
+.platform h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 15px; font-weight: 600; }
+.platform h3 span { padding: 1px 7px; border-radius: 99px; background: var(--mascot); color: #fff; font-size: 11px; font-weight: 600; }
+.platform a { display: grid; grid-template-columns: 7.5em 1fr auto 1em; gap: 12px; align-items: baseline; margin: 0 -10px; padding: 5px 10px; border-radius: 6px; }
+.platform a:hover { background: var(--hover); }
+.platform a:hover .file, .platform a:hover .arrow { color: var(--mascot); }
+.file { font: 12.5px var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.size { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.arrow { color: var(--muted); font-family: var(--mono); }
+.links { display: flex; gap: 20px; margin-top: 36px; font-size: 13px; color: var(--muted); }
+
+.source { display: flex; flex-direction: column; min-width: 0; background: var(--code-bg); }
+.bar { display: flex; align-items: baseline; gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.bar strong { font: 600 13px var(--mono); }
+.bar span { color: var(--muted); }
+.bar a { margin-left: auto; color: var(--muted); }
+.bar a:hover { color: var(--mascot); }
+.scroll { flex: 1; display: flex; overflow: auto; font: 12.5px/1.6 var(--mono); }
+.scroll pre { font: inherit; }
+.gutter { position: sticky; left: 0; padding: 16px 14px 24px 24px; text-align: right; color: var(--gutter); background: var(--code-bg); user-select: none; }
+.code { flex: 1 0 auto; padding: 16px 32px 24px 10px; tab-size: 4; }
+.code a { color: var(--mascot); }
+.k { color: var(--keyword); }
+.s { color: var(--string); }
+.n { color: var(--number); }
+.b { color: var(--builtin); }
+.f { color: var(--name); font-weight: 700; }
+.v { color: var(--self); }
+.c { color: var(--muted); font-style: italic; }
+
+@media (max-width: 860px) {
+  main { grid-template: auto auto / 1fr; height: auto; }
+  .intro { border-right: 0; border-bottom: 1px solid var(--rule); padding: 48px 16px; }
+  .source { height: 85vh; }
+  .bar { padding: 12px 16px; }
+  .gutter { padding-left: 16px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <section class="intro">
+    <div>
+      <svg class="mascot" viewBox="0 0 12 10" shape-rendering="crispEdges" role="img" aria-label="ucoder mascot">
+        <path class="body" d="M2 0h10v6H2zM3 6h8v2H3z"/>
+        <g class="eyes"><rect class="eye" x="4" y="2" width="1" height="2"/><rect class="eye" x="10" y="2" width="1" height="2"/></g>
+        <path class="legs" d="M1 8h1v2H1zM5 8h1v2H5zM11 8h1v2h-1z"/>
+        <path class="legs" d="M3 8h1v2H3zM9 8h1v2H9z"/>
+      </svg>
+      <h1><span>μ</span>coder</h1>
+      <p class="tagline">AI coding assistant with a command tool and file editing by line id. One Python file, zero dependencies, or a single standalone binary.</p>
+      <section class="downloads">
+        <header>
+          <h2>Download</h2>
+          <a href="https://github.com/EmilioSchi/ucoder/releases/tag/ucoder-binary-23-10-2026">Released 23 October 2026 ↗</a>
+        </header>
+        <div id="platforms"></div>
+      </section>
+      <nav class="links">
+        <a href="https://github.com/EmilioSchi/ucoder">GitHub</a>
+        <a href="https://github.com/EmilioSchi/ucoder/releases">All releases</a>
+        <a href="https://github.com/EmilioSchi/ucoder/blob/main/LICENSE">License</a>
+      </nav>
+    </div>
+  </section>
+  <section class="source">
+    <div class="bar"><strong>ucoder.py</strong><span id="meta"></span><a href="https://github.com/EmilioSchi/ucoder/blob/main/ucoder.py">View on GitHub ↗</a></div>
+    <div class="scroll"><pre class="gutter" id="gutter"></pre><pre class="code"><code id="code">Loading ucoder.py…</code></pre></div>
+  </section>
+</main>
+<script>
+const DOWNLOAD = "https://github.com/EmilioSchi/ucoder/releases/download/ucoder-binary-23-10-2026/";
+const SOURCE = "https://raw.githubusercontent.com/EmilioSchi/ucoder/main/ucoder.py";
+const PLATFORMS = [
+  ["macos", "macOS", [["Apple Silicon", "ucoder-macos-aarch64", 2194360], ["Intel", "ucoder-macos-x86_64", 5447888]]],
+  ["linux", "Linux", [["x86_64", "ucoder-linux-x86_64", 6277214], ["ARM64", "ucoder-linux-aarch64", 6861625],
+                      ["x86 32-bit", "ucoder-linux-i386", 5495849], ["ARMv7", "ucoder-linux-armhf", 4917683],
+                      ["RISC-V 64", "ucoder-linux-riscv64", 6409369]]],
+  ["windows", "Windows", [["x64", "ucoder-windows-x86_64.exe", 5539328], ["x86 32-bit", "ucoder-windows-i386.exe", 4428288]]],
+];
+const KEYWORDS = new Set("and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+const CONSTANTS = new Set(["True", "False", "None"]);
+const BUILTINS = new Set("abs all any bool bytes callable chr dict enumerate getattr hasattr hash int isinstance iter len list map max min next object open ord print range repr reversed set sorted str sum super tuple type zip Exception OSError KeyboardInterrupt SystemExit ValueError KeyError".split(" "));
+const TOKEN = /([rbfuRBFU]{0,2}(?:"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'))|(#.*)|(@[A-Za-z_][\w.]*)|(\b(?:0[xob][\da-fA-F_]+|\d[\d_]*\.?\d*(?:e[+-]?\d+)?)\b)|([A-Za-z_]\w*)/g;
+
+const escape = text => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const span = (cls, text) => cls ? `<span class="${cls}">${escape(text)}</span>` : escape(text);
+
+function highlight(source) {
+  let html = "", last = 0, previous = "";
+  for (const match of source.matchAll(TOKEN)) {
+    const [text, string, comment, decorator, number, word] = match, index = match.index;
+    let cls = string ? "s" : comment ? "c" : decorator || number ? "n" : "";
+    if (word) {
+      cls = previous === "def" || previous === "class" ? "f" : KEYWORDS.has(word) ? "k" : CONSTANTS.has(word) ? "n"
+          : word === "self" ? "v" : BUILTINS.has(word) ? "b" : "";
+      previous = word;
+    }
+    html += escape(source.slice(last, index)) + span(cls, text);
+    last = index + text.length;
+  }
+  return html + escape(source.slice(last));
+}
+
+const platform = `${navigator.userAgentData?.platform ?? navigator.platform} ${navigator.userAgent}`;
+const yours = /win/i.test(platform) ? "windows" : /mac/i.test(platform) ? "macos" : /linux|x11/i.test(platform) ? "linux" : "";
+document.getElementById("platforms").innerHTML = PLATFORMS
+  .sort(([a], [b]) => (b === yours) - (a === yours))
+  .map(([id, name, builds]) => `<div class="platform"><h3>${name}${id === yours ? "<span>your system</span>" : ""}</h3>` +
+    builds.map(([arch, file, size]) => `<a href="${DOWNLOAD + file}"><span>${arch}</span><span class="file">${file}</span>` +
+      `<span class="size">${(size / 1e6).toFixed(1)} MB</span><span class="arrow">↓</span></a>`).join("") + "</div>")
+  .join("");
+
+fetch(SOURCE)
+  .then(response => response.ok ? response.text() : Promise.reject(response.status))
+  .then(source => {
+    source = source.replace(/\n$/, "");
+    const count = source.split("\n").length;
+    document.getElementById("gutter").textContent = Array.from({length: count}, (_, i) => i + 1).join("\n");
+    document.getElementById("code").innerHTML = highlight(source);
+    document.getElementById("meta").textContent = `${count.toLocaleString("en")} lines · ${Math.round(source.length / 1024)} KB`;
+  })
+  .catch(() => {
+    document.getElementById("code").innerHTML = 'Could not load the source. <a href="https://github.com/EmilioSchi/ucoder/blob/main/ucoder.py">Read ucoder.py on GitHub</a>.';
+  });
+</script>
+</body>
+</html>

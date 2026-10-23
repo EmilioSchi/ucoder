@@ -3,3 +3,4 @@ __pycache__/
 .ucoder/
 ucoder
 ucoder.exe
+bin/

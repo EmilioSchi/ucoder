@@ -1,9 +1,7 @@
 <div align="center">
   <a href="logo.png"><img src="logo.png" alt="ucoder logo" width="70" /></a>
-  <br>
-  <strong>ucoder</strong>
-  <br>
-  <em>AI <strong>coding assistant</strong> with a command tool and file editing by line id.</em>
+
+$`\color{#4F84C2}\boldsymbol{\mu}`$**coder**<br><em>AI <strong>coding assistant</strong> with a command tool and file editing by line id.</em>
 </div>
 
 ---
