@@ -1,21 +1,16 @@
 <div align="center">
-  <a href="logo.png">
-    <img src="logo.png" alt="ucoder logo" width="70" />
-  </a>
-</br>
-<strong>ucoder</strong>
-</br>
-<em>AI <strong>coding assistant</strong> with a command tool and file editing by line id.</em>
-</br>
+  <a href="logo.png"><img src="logo.png" alt="ucoder logo" width="70" /></a>
+  <br>
+  <strong>ucoder</strong>
+  <br>
+  <em>AI <strong>coding assistant</strong> with a command tool and file editing by line id.</em>
 </div>
-</br>
-</br>
 
 ---
 
 Minimal Claude Code alternative. Single Python file, zero dependencies, ~1200 lines.
 
-<img src="screenshot.png" alt="ucoder" width="600" />
+<p align="center"><img src="screenshot.png" alt="ucoder" width="600" /></p>
 
 ## Tools
 
