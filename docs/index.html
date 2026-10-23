@@ -23,6 +23,16 @@
   --name: #111317;
   --self: #8a8f98;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --term-bg: #ffffff;
+  --term-fg: #1d1d1f;
+  --term-bar: #ebebeb;
+  --term-edge: rgba(0, 0, 0, .14);
+  --term-title: #4d4d4d;
+  --term-grey: #808080;
+  --term-magenta: #b02fb0;
+  --term-orange: #c25700;
+  --term-red: #c91b00;
+  --term-yellow: #9a7700;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -40,6 +50,16 @@
     --builtin: #b499f2;
     --name: #ffffff;
     --self: #8c919a;
+    --term-bg: #1e1e1e;
+    --term-fg: #e8e8e8;
+    --term-bar: #2c2c2e;
+    --term-edge: rgba(255, 255, 255, .12);
+    --term-title: #b3b3b3;
+    --term-grey: #8a8a8a;
+    --term-magenta: #d877d8;
+    --term-orange: #ff8f3a;
+    --term-red: #ff6b5f;
+    --term-yellow: #e6c35c;
     color-scheme: dark;
   }
 }
@@ -52,24 +72,42 @@ body {
 a { color: inherit; text-decoration: none; }
 main { display: grid; grid-template: minmax(0, 1fr) / minmax(360px, 2fr) 3fr; height: 100vh; }
 
-.intro { display: flex; flex-direction: column; overflow-y: auto; padding: 48px clamp(24px, 5vw, 80px); border-right: 1px solid var(--rule); }
-.intro > div { margin: auto 0; max-width: 460px; }
-.mascot { display: block; width: 120px; overflow: visible; margin-bottom: 32px; animation: float 3.2s ease-in-out infinite; }
+.intro { display: flex; flex-direction: column; overflow-y: auto; padding: 40px clamp(16px, 4vw, 56px); border-right: 1px solid var(--rule); }
+.intro > div { margin: auto 0; max-width: 520px; }
+
+.window { border-radius: 10px; overflow: hidden; background: var(--term-bg); box-shadow: 0 0 0 1px var(--term-edge), 0 22px 48px -18px rgba(0, 0, 0, .45); }
+.titlebar { position: relative; padding: 7px 70px; background: var(--term-bar); border-bottom: 1px solid var(--term-edge); color: var(--term-title); font-size: 12.5px; font-weight: 600; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lights { position: absolute; left: 12px; top: 50%; display: flex; gap: 8px; transform: translateY(-50%); }
+.lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+.lights i + i { background: #febc2e; }
+.lights i + i + i { background: #28c840; }
+.screen { height: 340px; overflow: hidden; padding: 18px 12px 8px; color: var(--term-fg); font: 12.5px/18px var(--mono); }
+.screen > div { min-height: 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.screen .say { padding-left: 2ch; text-indent: -2ch; }
+.screen .rule { white-space: nowrap; overflow: hidden; color: var(--term-grey); }
+.screen b, .blue { color: var(--mascot); font-weight: 700; }
+.grey { color: var(--term-grey); }
+.magenta { color: var(--term-magenta); }
+.orange { color: var(--term-orange); }
+.red { color: var(--term-red); }
+.yellow { color: var(--term-yellow); }
+.cursor { display: inline-block; width: 1ch; height: 15px; vertical-align: -3px; background: var(--term-grey); animation: blink-cursor 1s steps(1, end) infinite; }
+@keyframes blink-cursor { 50% { opacity: 0; } }
+.banner { display: flex; gap: 3ch; }
+h1 { display: inline; font: inherit; font-weight: 700; }
+h1 span { color: var(--mascot); }
+.mascot { flex: none; width: 6ch; height: 45px; overflow: visible; }
 .mascot .body, .mascot .legs { fill: var(--mascot); }
-.mascot .eye { fill: var(--bg); transform-box: fill-box; transform-origin: center; animation: blink 4.4s steps(1, end) infinite; }
+.mascot .eye { fill: var(--term-bg); transform-box: fill-box; transform-origin: center; animation: blink 4.4s steps(1, end) infinite; }
 .mascot .eyes { animation: glance 7s steps(1, end) infinite; }
 .mascot .legs { animation: wiggle .9s steps(1, end) infinite; }
 .mascot .legs + .legs { animation-delay: -.45s; }
-@keyframes float { 50% { transform: translateY(-8px); } }
 @keyframes wiggle { 50% { transform: translateY(-1px); } }
 @keyframes blink { 96% { transform: scaleY(0); } }
 @keyframes glance { 0%, 76% { transform: none; } 58% { transform: translateX(-1px); } }
-@media (prefers-reduced-motion: reduce) { .mascot, .mascot * { animation: none !important; } }
-h1 { font: 700 56px/1 var(--mono); letter-spacing: -0.03em; }
-h1 span { color: var(--mascot); }
-.tagline { margin-top: 14px; color: var(--muted); font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { .mascot *, .cursor { animation: none !important; } }
 
-.downloads { margin-top: 44px; }
+.downloads { margin-top: 40px; }
 .downloads header { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
 .downloads h2 { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .downloads header a { font-size: 13px; color: var(--muted); }
@@ -117,14 +155,20 @@ h1 span { color: var(--mascot); }
 <main>
   <section class="intro">
     <div>
-      <svg class="mascot" viewBox="0 0 12 10" shape-rendering="crispEdges" role="img" aria-label="ucoder mascot">
-        <path class="body" d="M2 0h10v6H2zM3 6h8v2H3z"/>
-        <g class="eyes"><rect class="eye" x="4" y="2" width="1" height="2"/><rect class="eye" x="10" y="2" width="1" height="2"/></g>
-        <path class="legs" d="M1 8h1v2H1zM5 8h1v2H5zM11 8h1v2h-1z"/>
-        <path class="legs" d="M3 8h1v2H3zM9 8h1v2H9z"/>
-      </svg>
-      <h1><span>μ</span>coder</h1>
-      <p class="tagline">AI coding assistant with a command tool and file editing by line id. One Python file, zero dependencies, or a single standalone binary.</p>
+      <div class="window">
+        <div class="titlebar"><span class="lights"><i></i><i></i><i></i></span>my-personal-project — ucoder — 80×24</div>
+        <div class="screen" id="screen">
+          <div class="banner" id="banner">
+            <svg class="mascot" viewBox="0 0 12 10" preserveAspectRatio="none" shape-rendering="crispEdges" role="img" aria-label="ucoder mascot">
+              <path class="body" d="M2 0h10v6H2zM3 6h8v2H3z"/>
+              <g class="eyes"><rect class="eye" x="4" y="2" width="1" height="2"/><rect class="eye" x="10" y="2" width="1" height="2"/></g>
+              <path class="legs" d="M1 8h1v2H1zM5 8h1v2H5zM11 8h1v2h-1z"/>
+              <path class="legs" d="M3 8h1v2H3zM9 8h1v2H9z"/>
+            </svg>
+            <div><h1><span>μ</span>coder</h1> <span class="grey">Darwin 25.6.0 (arm64)</span><br><span class="grey">claude-mythos-5-1</span><br><span class="grey">~/my-personal-project</span></div>
+          </div>
+        </div>
+      </div>
       <section class="downloads">
         <header>
           <h2>Download</h2>
@@ -186,6 +230,104 @@ document.getElementById("platforms").innerHTML = PLATFORMS
     builds.map(([arch, file, size]) => `<a href="${DOWNLOAD + file}"><span>${arch}</span><span class="file">${file}</span>` +
       `<span class="size">${(size / 1e6).toFixed(1)} MB</span><span class="arrow">↓</span></a>`).join("") + "</div>")
   .join("");
+
+const SESSIONS = [
+  ["Create a file hello.py that says hello to the user", [
+    null,
+    ["Bash", "touch hello.py", [], "exit code 0 · 0.1s"],
+    ["Replace", "hello.py start", [], "Added the file's initial content. … +9 lines"],
+    ["Bash", "python3 hello.py", ["Hello, dear user!"], "exit code 0 · 0.1s"],
+    "Created **hello.py**: running `python3 hello.py` prints `Hello, dear user!`.",
+  ]],
+  ["Hello dear, what is in this project?", [
+    null,
+    ["Bash", "ls", ["README.md", "hello.py", "notes.md"], "exit code 0 · 0.1s"],
+    ["Read", "README.md", [], "# my-personal-project … +5 lines"],
+    "Hi! It's a small Python project: **hello.py** greets the user, **README.md** explains how to run it, " +
+    "and **notes.md** keeps your to-do list.",
+  ]],
+  ["Add a --name option to hello.py", [
+    null,
+    ["Inspect", "hello.py", [], '7qx2|print("Hello, dear user!")'],
+    ["Replace", "hello.py 7qx2", [], "Edited line 1. … +14 lines"],
+    ["Bash", "python3 hello.py --name Ada", ["Hello, dear Ada!"], "exit code 0 · 0.1s"],
+    "Done. **--name** sets who to greet; without it, hello.py still prints `Hello, dear user!`.",
+  ]],
+];
+const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const term = document.getElementById("screen");
+const BANNER = document.getElementById("banner").outerHTML;
+const RULE = `<div class="rule">${"─".repeat(240)}</div>`;
+const wait = ms => STILL ? null : new Promise(resolve => setTimeout(resolve, ms * (0.75 + Math.random() / 2)));
+const paint = (cls, text) => `<span class="${cls}">${escape(text)}</span>`;
+const bold = text => text.split("**").map((part, i) => i % 2 ? `<b>${escape(part)}</b>` : escape(part)).join("");
+
+function emit(html = "", cls = "") {
+  term.insertAdjacentHTML("beforeend", html.startsWith("<div") ? html : `<div class="${cls}">${html}</div>`);
+  term.scrollTop = term.scrollHeight;
+  return term.lastElementChild;
+}
+
+async function ask(text) {
+  emit(RULE);
+  const line = emit(`<span class="blue">❯ </span><span></span><span class="cursor"></span>`);
+  await wait(1400);
+  for (const char of text) {
+    line.children[1].textContent += char;
+    await wait(55);
+  }
+  await wait(500);
+  line.lastElementChild.remove();
+  emit(RULE);
+}
+
+async function step(item) {
+  if (item === null) {
+    emit();
+    emit(paint("magenta", "● thinking"));
+    return wait(1500);
+  }
+  if (typeof item === "string") {
+    emit();
+    const line = emit("", "say");
+    const words = item.split(/(?=\s)/);
+    for (let i = 1; i <= words.length; i++) {
+      line.innerHTML = "● " + bold(words.slice(0, i).join(""));
+      term.scrollTop = term.scrollHeight;
+      await wait(45);
+    }
+    return;
+  }
+  const [name, gist, output, result] = item;
+  const colour = name === "Bash" ? "blue" : "orange";
+  emit();
+  emit(`${paint(colour, "● " + name)}(${paint("grey", gist)})`);
+  await wait(800);
+  for (const line of output) {
+    emit(paint("grey", "  │  ") + escape(line));
+    await wait(120);
+  }
+  emit(paint(/^(error:|exit code [1-9])/.test(result) ? "red" : "grey", "  └  " + result));
+  await wait(450);
+}
+
+async function play() {
+  do {
+    term.innerHTML = BANNER;
+    emit();
+    for (const [input, steps] of SESSIONS) {
+      await ask(input);
+      for (const item of steps) {
+        await step(item);
+      }
+      emit();
+    }
+    emit(RULE);
+    emit(`<span class="blue">❯ </span><span class="cursor"></span>`);
+    await wait(7000);
+  } while (!STILL);
+}
+play();
 
 fetch(SOURCE)
   .then(response => response.ok ? response.text() : Promise.reject(response.status))
