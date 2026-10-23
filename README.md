@@ -1,6 +1,6 @@
 <div align="center">
   <a href="logo.png">
-    <img src="logo.png" alt="xige logo" width="110" />
+    <img src="logo.png" alt="ucoder logo" width="70" />
   </a>
 </br>
 <strong>ucoder</strong>
@@ -11,9 +11,11 @@
 </br>
 </br>
 
+---
+
 Minimal Claude Code alternative. Single Python file, zero dependencies, ~1200 lines.
 
-![ucoder](screenshot.png)
+<img src="screenshot.png" alt="ucoder" width="600" />
 
 ## Tools
 
