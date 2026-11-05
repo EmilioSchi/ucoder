@@ -112,10 +112,10 @@ h1 span { color: var(--mascot); }
 .downloads h2 { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .downloads header a { font-size: 13px; color: var(--muted); }
 .downloads header a:hover, .links a:hover { color: var(--mascot); }
-.platform { padding: 10px 0 2px; }
+.platform { padding: 8px 0 0; }
 .platform h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; font-size: 15px; font-weight: 600; }
 .platform h3 span { padding: 1px 7px; border-radius: 99px; background: var(--mascot); color: #fff; font-size: 11px; font-weight: 600; }
-.platform a { display: grid; grid-template-columns: 7.5em 1fr auto 1em; gap: 12px; align-items: baseline; margin: 0 -10px; padding: 3px 10px; border-radius: 6px; line-height: 1.4; }
+.platform a { display: grid; grid-template-columns: 7.5em 1fr auto 1em; gap: 12px; align-items: baseline; margin: 0 -10px; padding: 1px 10px; border-radius: 6px; line-height: 1.4; }
 .platform a:hover { background: var(--hover); }
 .platform a:hover .file, .platform a:hover .arrow { color: var(--mascot); }
 .file { font: 12.5px var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -172,7 +172,7 @@ h1 span { color: var(--mascot); }
       <section class="downloads">
         <header>
           <h2>Download</h2>
-          <a href="https://github.com/EmilioSchi/ucoder/releases/tag/ucoder-binary-23-10-2026">Released 23 October 2026 ↗</a>
+          <a href="https://github.com/EmilioSchi/ucoder/releases/tag/coder-binary-05-11-2026">Released 5 November 2026 ↗</a>
         </header>
         <div id="platforms"></div>
       </section>
@@ -189,14 +189,15 @@ h1 span { color: var(--mascot); }
   </section>
 </main>
 <script>
-const DOWNLOAD = "https://github.com/EmilioSchi/ucoder/releases/download/ucoder-binary-23-10-2026/";
+const DOWNLOAD = "https://github.com/EmilioSchi/ucoder/releases/download/coder-binary-05-11-2026/";
 const SOURCE = "https://raw.githubusercontent.com/EmilioSchi/ucoder/main/ucoder.py";
 const PLATFORMS = [
-  ["macos", "macOS", [["Apple Silicon", "ucoder-macos-aarch64", 2194360], ["Intel", "ucoder-macos-x86_64", 5447888]]],
-  ["linux", "Linux", [["x86_64", "ucoder-linux-x86_64", 6277214], ["ARM64", "ucoder-linux-aarch64", 6861625],
-                      ["x86 32-bit", "ucoder-linux-i386", 5495849], ["ARMv7", "ucoder-linux-armhf", 4917683],
-                      ["RISC-V 64", "ucoder-linux-riscv64", 6409369]]],
-  ["windows", "Windows", [["x64", "ucoder-windows-x86_64.exe", 5539328], ["x86 32-bit", "ucoder-windows-i386.exe", 4428288]]],
+  ["macos", "macOS", [["Apple Silicon", "ucoder-macos-aarch64", 2178008], ["Intel", "ucoder-macos-x86_64", 4813600]]],
+  ["linux", "Linux", [["x86_64", "ucoder-linux-x86_64", 2881544], ["ARM64", "ucoder-linux-aarch64", 2648328],
+                      ["x86 32-bit", "ucoder-linux-i386", 2866116], ["ARMv7", "ucoder-linux-armhf", 2582972],
+                      ["RISC-V 64", "ucoder-linux-riscv64", 2282288]]],
+  ["windows", "Windows", [["x64", "ucoder-windows-x86_64.exe", 2634752], ["ARM64", "ucoder-windows-aarch64.exe", 2542592],
+                          ["x86 32-bit", "ucoder-windows-i386.exe", 2285568], ["ARMv7", "ucoder-windows-armv7.exe", 2092544]]],
 ];
 const KEYWORDS = new Set("and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
 const CONSTANTS = new Set(["True", "False", "None"]);
