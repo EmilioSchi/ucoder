@@ -157,7 +157,7 @@ class Terminal:
         self.line("! " + text, self.YELLOW)
 
     def error(self, err):
-        self.line("⏺ " + self.explain(err), self.RED)
+        self.line("● " + self.explain(err), self.RED)
 
     def explain(self, err):
         if type(err) in (str, Exception):
@@ -184,10 +184,10 @@ class Terminal:
     def stream(self, event):
         kind, item = event.get("type"), (event.get("item") or {}).get("type")
         if kind == "response.output_text.delta":
-            self.stream_to(self.STREAM_TEXT, "\n" + self.paint("⏺ "))
+            self.stream_to(self.STREAM_TEXT, "\n" + self.paint("● "))
             self.write(self.emphasis(self.wrap(str(event.get("delta", "")))))
         elif kind == "response.output_item.added" and item == "reasoning":
-            self.stream_to(self.STREAM_THINKING, "\n" + self.paint("⏺ thinking", self.MAGENTA))
+            self.stream_to(self.STREAM_THINKING, "\n" + self.paint("● thinking", self.MAGENTA))
         elif kind in ("response.output_item.added", "response.output_item.done") and item == "message":
             if self.stream_state == self.STREAM_TEXT:
                 self.stream_state = self.STREAM_BREAK
@@ -225,7 +225,7 @@ class Terminal:
         elif name == "read" and args.flag("ids"):
             name = "inspect"
         summary = self.clip(self._gist(args).replace("\n", " "), self.CALL_CHARS)
-        title = self.paint("⏺ " + name[:1].upper() + name[1:], colour)
+        title = self.paint("● " + name[:1].upper() + name[1:], colour)
         self.write("\n" + title + "(" + self.paint(summary, self.GREY) + ")\n")
 
     def _gist(self, args):
